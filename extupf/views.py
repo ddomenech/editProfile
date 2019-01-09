@@ -4,14 +4,17 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework import status, viewsets, mixins
 from rest_framework.parsers import FileUploadParser
 from rest_framework.exceptions import ParseError
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .serializers import UserProfileSerializer, UserSerializer, PasswordSerializer, AvatarSerializer
-from .models import User, UserProfile
+from .models import UserProfile
+from django.contrib.auth.models import User
 from rest_framework.request import Request
 
 from rest_framework import permissions
-from .permissions import IsOwnerOrReadOnly, IsSameUserAllowEditionOrReadOnly, IsAdminUserOrReadOnly
+from .permissions import IsOwnerOrReadOnly, IsSameUserAllowEditionOrReadOnly, IsAdminUserOrReadOnly, IsOwner
 
 # Create your views here.
 
@@ -22,8 +25,15 @@ class UserProfileViewSet(mixins.ListModelMixin,
     
     queryset=UserProfile.objects.all()
     serializer_class=UserProfileSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-                            IsOwnerOrReadOnly,)
+    permission_classes = (IsOwner,)
+    
+    def get_queryset(self):
+        """
+        This view should return a list of all the purchases
+        for the currently authenticated user.
+        """
+        user = self.request.user
+        return UserProfile.objects.filter(user_id=user.id)
 
     @action(detail=True,methods=['put','patch'], serializer_class=PasswordSerializer)
     def set_password(self, request, pk):
@@ -61,5 +71,13 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                             IsSameUserAllowEditionOrReadOnly,)
     
+class GetUserProfileView(viewsets.ModelViewSet): 
+    queryset=UserProfile.objects.all()
+    serializer_class=UserProfileSerializer
+    permission_classes=(IsOwnerOrReadOnly,)
 
+    def get_queryset(self):
+        if self.action == 'list':
+            return self.queryset.filter(user_id=self.request.user.id)
+        return self.queryset
    

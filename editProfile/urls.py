@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from extupf.views import UserViewSet, UserProfileViewSet
+from extupf.views import UserViewSet, UserProfileViewSet, GetUserProfileView
 from django.urls import path, include
 from rest_framework.documentation import  include_docs_urls
 from rest_framework.routers import DefaultRouter
@@ -30,10 +30,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include(router.urls)),
     #path('upload/<str:filename>/', CargarArchivoView.as_view(), name="upload"),
-    path('api-token-auth/', obtain_jwt_token),
-    path('api-token-refresh/', refresh_jwt_token),
+    path('api/v1/api-token-auth/', obtain_jwt_token),
+    path('api/v1/api-token-refresh/', refresh_jwt_token),
+    path('api/v1/api-auth/',include('rest_framework.urls')),
     path('api/v1/docs', include_docs_urls(title='Mi Api')),
-    path('api-auth/',include('rest_framework.urls')),
 ]
 
 if settings.DEBUG:
