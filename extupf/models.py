@@ -4,9 +4,9 @@ from django.db import models
 from phonenumber_field.formfields import PhoneNumberField
 
 
-class UserProfile(AbstractUser):
+class User(AbstractUser):
     avatar = models.ImageField(null=True)
     phone = PhoneNumberField()
 
     def __str__(self):
-        return self.user.username
+        return self.username

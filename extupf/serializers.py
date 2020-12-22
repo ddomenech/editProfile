@@ -1,19 +1,17 @@
+from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 
-from .models import UserProfile
+from .models import User
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    username = serializers.CharField()
-    email = serializers.CharField()
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
     avatar = serializers.ImageField()
+    phone = PhoneNumberField()
 
     class Meta:
-        model = UserProfile
+        model = User
         fields = ('url', 'id', 'username', 'email', 'first_name', 'last_name',
-                  'avatar', 'user', 'user_url', 'name', 'phone')
+                  'avatar', 'phone')
 
     def get_full_name(self, obj):
         request = self.context['request']
@@ -22,6 +20,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-        instance.user.save()
         instance.save()
         return instance
+
+
+class PasswordSerializer(serializers.Serializer):
+    old_password=serializers.CharField(required=True)
+    new_password=serializers.CharField(required=True)

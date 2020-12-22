@@ -1,42 +1,7 @@
-from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated
 
 
-class IsOwnerOrReadOnly(permissions.BasePermission):
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        return (request.user and request.user.is_superuser) or (
-            obj.user == request.user)
-
-
-class IsOwner(permissions.BasePermission):
+class IsOwner(IsAuthenticated):
 
     def has_object_permission(self, request, view, obj):
-        return obj.user == request.user
-
-
-class IsAdminUserOrReadOnly(permissions.BasePermission):
-
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        return request.user and request.user.is_staff
-
-
-class IsSameUserAllowEditionOrReadOnly(permissions.BasePermission):
-
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        return request.user.is_staff or request.method == 'PUT'
-
-    def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        return request.user.is_staff or \
-               (request.method == 'PUT' and obj.id == request.user.id)
+        return obj == request.user

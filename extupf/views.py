@@ -1,27 +1,26 @@
 from rest_framework import status, viewsets, mixins
-from rest_framework import permissions
-from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser, JSONParser, FileUploadParser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import UserProfile
-from .permissions import IsOwnerOrReadOnly, IsSameUserAllowEditionOrReadOnly, \
-    IsOwner
-from .serializers import UserProfileSerializer, UserSerializer, \
-    PasswordSerializer
+from .models import User
+from .permissions import IsOwner
+from .serializers import UserProfileSerializer, PasswordSerializer
 
 
 class UserProfileViewSet(mixins.ListModelMixin,
                          mixins.RetrieveModelMixin,
                          mixins.UpdateModelMixin,
                          viewsets.GenericViewSet):
-    queryset = UserProfile.objects.all()
+    queryset = User.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = (IsOwner,)
+    permission_classes = (IsOwner, IsAuthenticated)
+    parser_classes = (JSONParser, MultiPartParser, FileUploadParser)
 
     def get_queryset(self):
         user = self.request.user
-        return UserProfile.objects.filter(user_id=user.id)
+        return User.objects.filter(id=user.id)
 
     @action(detail=True, methods=['put', 'patch'], serializer_class=PasswordSerializer)
     def set_password(self, request, pk):
@@ -36,14 +35,3 @@ class UserProfileViewSet(mixins.ListModelMixin,
             return Response({"status": "password set"}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class GetUserProfileView(viewsets.ModelViewSet):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
-
-    def get_queryset(self):
-        if self.action == 'list':
-            return self.queryset.filter(user_id=self.request.user.id)
-        return self.queryset
