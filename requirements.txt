@@ -82,5 +82,5 @@ toml==0.10.2
     # via pytest
 uritemplate==3.0.1
     # via coreapi
-urllib3==1.26.2
+urllib3==1.26.5
     # via requests
