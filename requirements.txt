@@ -18,6 +18,12 @@ coreapi==2.3.3
     #   openapi-codec
 coreschema==0.0.4
     # via coreapi
+django==3.1.4
+    # via
+    #   -r requirements.in
+    #   django-cors-headers
+    #   django-phonenumber-field
+    #   djangorestframework
 django-cors-headers==3.6.0
     # via -r requirements.in
 django-environ==0.4.5
@@ -26,18 +32,12 @@ django-phonenumber-field[phonenumbers]==5.0.0
     # via -r requirements.in
 django-rest-swagger==2.2.0
     # via -r requirements.in
-django==3.1.4
-    # via
-    #   -r requirements.in
-    #   django-cors-headers
-    #   django-phonenumber-field
-    #   djangorestframework
-djangorestframework-jwt==1.11.0
-    # via -r requirements.in
 djangorestframework==3.12.2
     # via
     #   -r requirements.in
     #   django-rest-swagger
+djangorestframework-jwt==1.11.0
+    # via -r requirements.in
 idna==2.10
     # via requests
 iniconfig==1.1.1
@@ -54,7 +54,7 @@ packaging==20.8
     # via pytest
 phonenumbers==8.12.15
     # via django-phonenumber-field
-pillow==8.0.1
+pillow==9.3.0
     # via -r requirements.in
 pluggy==0.13.1
     # via pytest
@@ -66,10 +66,10 @@ pyjwt==1.7.1
     # via djangorestframework-jwt
 pyparsing==2.4.7
     # via packaging
-pytest-django==4.1.0
-    # via -r requirements.in
 pytest==6.2.1
     # via pytest-django
+pytest-django==4.1.0
+    # via -r requirements.in
 pytz==2020.4
     # via django
 requests==2.25.0
